@@ -1,14 +1,6 @@
-/* LED Scheduler Src
-Contains code for master + slave devices
-Webserver src in html.hpp
-
-Contact robertjnies+lsc@gmail.com for questions.
-*/
-
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include <AsyncJson.h>
-//#include <AsyncTCP.h>
 #include <html.hpp>
 #include <secrets.h>
 #include <WiFi.h>
@@ -18,6 +10,12 @@ Contact robertjnies+lsc@gmail.com for questions.
 unsigned long blink_led_end_time = 0;
 
 StaticJsonDocument<65536> saved_json;
+const char starting_json[] PROGMEM = R"rawliteral(
+{
+  "Example Item": {"option": "C", "text": "Example text"},
+  "Another Item": {"option": "A", "text": "More text"}
+}
+)rawliteral";
 
 #pragma region Webserver
 AsyncWebServer server(80);
@@ -95,6 +93,8 @@ void setup() {
   delay(1000);
   Serial.setDebugOutput(true);
   Serial.println("Serial connected!");
+
+  deserializeJson(saved_json, starting_json);
 
   if (connect_to_wifi) {
     start_webserver();
