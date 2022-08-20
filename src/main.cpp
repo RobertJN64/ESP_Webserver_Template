@@ -58,6 +58,8 @@ void start_webserver() {
     serializeJsonPretty(json, jsonstr);
     Serial.println("Recieved json: ");
     Serial.println(jsonstr);
+    
+    deserializeJson(saved_json, jsonstr);
     request->send(200, "text/plain", "OK");
   }, 65536);
   server.addHandler(d_handler);
@@ -94,9 +96,11 @@ void setup() {
   Serial.setDebugOutput(true);
   Serial.println("Serial connected!");
 
+  pinMode(LED_PIN, OUTPUT);
+
   deserializeJson(saved_json, starting_json);
 
-  if (connect_to_wifi) {
+  if (connect_to_wifi()) {
     start_webserver();
   }
 }

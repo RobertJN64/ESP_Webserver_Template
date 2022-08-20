@@ -7,8 +7,12 @@ const char index_html[] PROGMEM = R"rawliteral(
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script>
     var changed = false;
-    var sequence_json;
-    var schedule_json;
+    
+    function get_request(url) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", url);
+      xhr.send();
+    }
 
     function get_request_async(url, done) {
       var request = new XMLHttpRequest();
@@ -34,8 +38,8 @@ const char index_html[] PROGMEM = R"rawliteral(
         </select></td>`
       tr.innerHTML += `<td><input id="text_${name}" type="text" value="${text}" onchange="change()"></td>`
       tr.innerHTML += `<td><button class="nice_button" style="background-color: red" onclick="delete_row('${name}')">Delete Row</button></td>`
-      document.getElementById("option_" + name).value = option;
       tbody.appendChild(tr);
+      document.getElementById("option_" + name).value = option;
     }
 
     function load_json(data) {
@@ -64,8 +68,9 @@ const char index_html[] PROGMEM = R"rawliteral(
         var name = prompt("Sequence name?");
         var tbody = document.getElementById('json_table').children[1];
         for (var i = 0; i < tbody.children.length; i++) {
-            if (tbody.children[i].children[0].id == name) {
+            if (tbody.children[i].id == name) {
                 alert("Name taken!");
+                return;
             };
         }
         if (name != "") {
@@ -80,8 +85,8 @@ const char index_html[] PROGMEM = R"rawliteral(
       for (var i = 0; i < tbody.children.length; i++) {
         var new_item = {};
         var id = tbody.children[i].id;
-        new_item['option'] = document.getElementById("option" + id).value;
-        new_item['text'] = document.getElementById("text" + id).value;
+        new_item['option'] = document.getElementById("option_" + id).value;
+        new_item['text'] = document.getElementById("text_" + id).value;
 
         if (validate) {
             if (new_item['text'] == "") {
@@ -98,7 +103,7 @@ const char index_html[] PROGMEM = R"rawliteral(
       returnjson = get_table_json(true);
       if (returnjson) {
         document.getElementById("savebtn").disabled = true;
-        document.getElementById("savebtn").style.backgroundColor = "grey";
+        document.getElementById("savebtn").style.backgroundColor = "darkgrey";
         var request = new XMLHttpRequest();
         request.open("POST", "/set_json");
         request.setRequestHeader("Content-Type", "application/json")
@@ -108,8 +113,8 @@ const char index_html[] PROGMEM = R"rawliteral(
     }
 
     function delete_row(name) {
-        if (confirm("Are you sure you want to delete this sequence?")) {
-            document.getElementById("sequence_table").children[1].removeChild(document.getElementById(name));
+        if (confirm("Are you sure you want to delete this row?")) {
+            document.getElementById("json_table").children[1].removeChild(document.getElementById(name));
             save();
         }
     }
@@ -117,7 +122,7 @@ const char index_html[] PROGMEM = R"rawliteral(
   <link rel="stylesheet" href="/stylesheet">
 </head>
 <body>
-    <h2 style="text-align: center">~HTML_HEADER~</h2>
+    <h2 style="text-align: center">~HEADER~</h2>
     <div class="roundedDiv">
       <table id="json_table">
           <thead>
@@ -132,7 +137,7 @@ const char index_html[] PROGMEM = R"rawliteral(
           </tbody>
       </table>
       <button onclick="add_row()" class="nice_button" style="background-color: blue">Add row!</button>
-      <button disabled id="savebtn" onclick="save()" class="nice_button" style="background-color: grey">Save updates!</button>
+      <button disabled id="savebtn" onclick="save()" class="nice_button" style="background-color: darkgrey">Save updates!</button>
     </div>
     <button onclick="second_page()" style="background-color: blue" class="nice_button">Go to second page!</button>
     <button onclick="get_request('/blink_led')" style="background-color: blue" class="nice_button">Blink LED!</button>
