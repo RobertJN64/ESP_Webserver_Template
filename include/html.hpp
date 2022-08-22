@@ -1,4 +1,6 @@
 #include <Arduino.h>
+#ifndef HTML_H
+#define HTML_H
 
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html>
@@ -217,3 +219,4 @@ table th {
     color: white;
 }
 )rawliteral";
+#endif

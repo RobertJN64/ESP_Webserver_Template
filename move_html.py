@@ -4,6 +4,8 @@ files = os.listdir("html")
 
 with open("include/html.hpp", "w+") as f:
     f.write("#include <Arduino.h>\n")
+    f.write("#ifndef HTML_H\n");
+    f.write("#define HTML_H\n")
 
     for item in files:
         if item.endswith(".html") or item.endswith(".css") or item.endswith(".js"):
@@ -13,3 +15,5 @@ with open("include/html.hpp", "w+") as f:
             with open("html/" + item) as f2:
                 f.write(f2.read())
             f.write('\n)rawliteral";\n')
+    
+    f.write("#endif")
