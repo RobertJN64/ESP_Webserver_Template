@@ -4,7 +4,7 @@ files = os.listdir("html")
 
 with open("include/html.hpp", "w+") as f:
     f.write("#include <Arduino.h>\n")
-    f.write("#ifndef HTML_H\n");
+    f.write("#ifndef HTML_H\n")
     f.write("#define HTML_H\n")
 
     for item in files:
